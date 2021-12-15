@@ -5,13 +5,13 @@ using EtCoreApi.Entities;
 
 namespace EtCoreApi.Repositories
 {
-    public class InMemExpensesRepository
+    public class InMemExpensesRepository : IExpensesRepository
     {
         private readonly List<Expense> expenses = new()
         {
             new Expense { ExpenseId = 1, ExpenseDetails = "First expense", ExpenseDate = DateTimeOffset.UtcNow, ExpenseAmount = 700 },
             new Expense { ExpenseId = 2, ExpenseDetails = "Second expense", ExpenseDate = DateTimeOffset.UtcNow, ExpenseAmount = 800 },
-            new Expense { ExpenseId = 2, ExpenseDetails = "Third expense", ExpenseDate = DateTimeOffset.UtcNow, ExpenseAmount = 900 },
+            new Expense { ExpenseId = 3, ExpenseDetails = "Third expense", ExpenseDate = DateTimeOffset.UtcNow, ExpenseAmount = 900 },
         };
 
         public IEnumerable<Expense> GetExpenses()
@@ -19,9 +19,14 @@ namespace EtCoreApi.Repositories
             return expenses;
         }
 
+        public void CreateExpense(Expense expense)
+        {
+            expenses.Add(expense);
+        }
+
         public Expense GetExpense(int expenseId)
         {
-            return expenses.SingleOrDefault(p => p.ExpenseId == expenseId);
+            return expenses.FirstOrDefault(p => p.ExpenseId == expenseId);
         }
     }
 }

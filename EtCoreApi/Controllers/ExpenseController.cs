@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using EtCoreApi.Dtos;
 using EtCoreApi.Entities;
 using EtCoreApi.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -10,17 +12,42 @@ namespace EtCoreApi.Controllers
     [Route("Expense")]
     public class ExpenseController : ControllerBase
     {
-        private readonly InMemExpensesRepository inMemExpensesRepository;
+        private readonly IExpensesRepository iExpensesRepository;
 
-        public ExpenseController()
+        public ExpenseController(IExpensesRepository _iExpensesRepository)
         {
-            inMemExpensesRepository = new InMemExpensesRepository();
+            this.iExpensesRepository = _iExpensesRepository;
         }
 
         [HttpGet]
-        public IEnumerable<Expense> GetExpenses()
+        public IEnumerable<ExpenseDto> GetExpenses()
         {
+            var expenses = iExpensesRepository.GetExpenses().Select( p => p.AsDto());
 
+            return expenses;
+        }
+
+        [HttpGet("{expenseId}")]
+        public ActionResult<ExpenseDto> GetExpense(int expenseId)
+        {
+            var expense = iExpensesRepository.GetExpense(expenseId);
+
+            if (expense == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(expense.AsDto());
+        }
+
+        [HttpPost]
+        public ActionResult<CreateExpenseDto> CreateExpense(CreateExpenseDto createExpenseDto)
+        {
+            Expense expense = createExpenseDto.AsExpense();
+
+            iExpensesRepository.CreateExpense(expense);
+
+            return CreatedAtAction(nameof(GetExpense),new {id = expense.ExpenseDetails},expense.AsDto());
         }
     }
 }

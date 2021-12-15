@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace EtCoreApi.Entities
+namespace EtCoreApi.Dtos
 {
-    public record Expense
+    public record ExpenseDto
     {
         public int ExpenseId { get; init; }
         public DateTimeOffset ExpenseDate { get; set; }
