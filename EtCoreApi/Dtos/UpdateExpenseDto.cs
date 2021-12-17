@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace EtCoreApi.Dtos
 {
-    public record CreateExpenseDto
+    public record UpdateExpenseDto
     {
         [Required]
         public DateTimeOffset ExpenseDate { get; set; }

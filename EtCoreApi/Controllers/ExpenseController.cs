@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using EtCoreApi.Dtos;
+﻿using EtCoreApi.Dtos;
 using EtCoreApi.Entities;
 using EtCoreApi.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace EtCoreApi.Controllers
 {
@@ -19,12 +18,30 @@ namespace EtCoreApi.Controllers
             this.iExpensesRepository = _iExpensesRepository;
         }
 
-        [HttpGet]
-        public IEnumerable<ExpenseDto> GetExpenses()
+        [HttpPost]
+        public ActionResult<CreateExpenseDto> CreateExpense(CreateExpenseDto createExpenseDto)
         {
-            var expenses = iExpensesRepository.GetExpenses().Select( p => p.AsDto());
+            Expense expense = createExpenseDto.AsExpense();
 
-            return expenses;
+            iExpensesRepository.CreateExpense(expense);
+
+            return Ok(CreatedAtAction(nameof(GetExpense), new { id = expense.ExpenseDetails }, expense.AsDto()));
+        }
+
+        // DELETE /expense/{expenseId}
+        [HttpDelete("expenseId")]
+        public ActionResult DeleteExpense(int expenseId)
+        {
+            var existingExpense = iExpensesRepository.GetExpense(expenseId);
+
+            if (existingExpense is null)
+            {
+                return NotFound();
+            }
+
+            iExpensesRepository.DeleteExpense(existingExpense.ExpenseId);
+
+            return NoContent();
         }
 
         [HttpGet("{expenseId}")]
@@ -40,14 +57,34 @@ namespace EtCoreApi.Controllers
             return Ok(expense.AsDto());
         }
 
-        [HttpPost]
-        public ActionResult<CreateExpenseDto> CreateExpense(CreateExpenseDto createExpenseDto)
+        [HttpGet]
+        public IEnumerable<ExpenseDto> GetExpenses()
         {
-            Expense expense = createExpenseDto.AsExpense();
+            var expenses = iExpensesRepository.GetExpenses().Select(p => p.AsDto());
 
-            iExpensesRepository.CreateExpense(expense);
+            return expenses;
+        }
+        // PUT /expense/{id}
+        [HttpPut("{expenseId}")]
+        public ActionResult UpdateExpense(int expenseId, UpdateExpenseDto updateExpenseDto)
+        {
+            var existingExpense = iExpensesRepository.GetExpense(expenseId);
 
-            return CreatedAtAction(nameof(GetExpense),new {id = expense.ExpenseDetails},expense.AsDto());
+            if (existingExpense is null)
+            {
+                return NotFound();
+            }
+
+            Expense updatedExpense = existingExpense with
+            {
+                ExpenseDetails = updateExpenseDto.ExpenseDetails,
+                ExpenseAmount = updateExpenseDto.ExpenseAmount,
+                ExpenseDate = updateExpenseDto.ExpenseDate
+            };
+
+            iExpensesRepository.UpdateExpense(updatedExpense);
+
+            return NoContent();
         }
     }
 }
