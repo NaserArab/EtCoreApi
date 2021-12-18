@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace EtCoreApi.Repositories
 {
@@ -14,31 +15,37 @@ namespace EtCoreApi.Repositories
             new Expense { Id = Guid.NewGuid(), ExpenseDetails = "Third expense", ExpenseDate = DateTimeOffset.UtcNow, ExpenseAmount = 900 },
         };
 
-        public void CreateExpense(Expense expense)
+        public async Task CreateExpenseAsync(Expense expense)
         {
             expenses.Add(expense);
+            await Task.CompletedTask;
         }
 
-        public void DeleteExpense(Guid Id)
+        public async Task DeleteExpenseAsync(Guid Id)
         {
             var index = expenses.FindIndex(p => p.Id == Id);
             expenses.RemoveAt(index);
+
+            await Task.CompletedTask;
         }
 
-        public Expense GetExpense(Guid Id)
+        public async Task<Expense> GetExpenseAsync(Guid Id)
         {
-            return expenses.FirstOrDefault(p => p.Id == Id);
+            var expense = expenses.FirstOrDefault(p => p.Id == Id);
+            return await Task.FromResult(expense);
         }
 
-        public IEnumerable<Expense> GetExpenses()
+        public async Task<IEnumerable<Expense>> GetExpensesAsync()
         {
-            return expenses;
+            return await Task.FromResult(expenses);
         }
 
-        public void UpdateExpense(Expense expense)
+        public async Task UpdateExpenseAsync(Expense expense)
         {
             var index = expenses.FindIndex(p => p.Id == expense.Id);
             expenses[index] = expense;
+
+            await Task.CompletedTask;
         }
     }
 }

@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using EtCoreApi.Entities;
+﻿using EtCoreApi.Entities;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace EtCoreApi.Repositories
 {
     public class MongoDbExpensesRepository : IExpensesRepository
     {
-        private const string databaseName = "ExpensesTrackerDb";
         private const string collectionName = "Expenses";
+        private const string databaseName = "ExpensesTrackerDb";
         private readonly IMongoCollection<Expense> expensesCollection;
         private readonly FilterDefinitionBuilder<Expense> filterBuilder = Builders<Expense>.Filter;
 
@@ -17,35 +18,34 @@ namespace EtCoreApi.Repositories
         {
             IMongoDatabase database = mongoClient.GetDatabase(databaseName);
             expensesCollection = database.GetCollection<Expense>(collectionName);
-        } 
-
-        public void CreateExpense(Expense expense)
-        {
-            expensesCollection.InsertOne(expense);
         }
 
-        public void DeleteExpense(Guid Id)
+        public async Task CreateExpenseAsync(Expense expense)
+        {
+            await expensesCollection.InsertOneAsync(expense);
+        }
+
+        public async Task DeleteExpenseAsync(Guid Id)
         {
             var filter = filterBuilder.Eq(expense => expense.Id, Id);
-            expensesCollection.DeleteOne(filter);
+            await expensesCollection.DeleteOneAsync(filter);
         }
 
-        public Expense GetExpense(Guid id)
+        public async Task<Expense> GetExpenseAsync(Guid id)
         {
-            var filter = filterBuilder.Eq(expense => expense.Id,id);
-            return expensesCollection.Find(filter).SingleOrDefault();
+            var filter = filterBuilder.Eq(expense => expense.Id, id);
+            return await expensesCollection.Find(filter).SingleOrDefaultAsync();
         }
 
-        public IEnumerable<Expense> GetExpenses()
+        public async Task<IEnumerable<Expense>> GetExpensesAsync()
         {
-            return expensesCollection.Find(new BsonDocument()).ToList();
+            return await expensesCollection.Find(new BsonDocument()).ToListAsync();
         }
-            
-        public void UpdateExpense(Expense expense)
+
+        public async Task UpdateExpenseAsync(Expense expense)
         {
             var filter = filterBuilder.Eq(existingExpense => existingExpense.Id, expense.Id);
-            expensesCollection.ReplaceOne(filter, expense);
-
+            await expensesCollection.ReplaceOneAsync(filter, expense);
         }
     }
 }

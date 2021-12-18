@@ -5,6 +5,7 @@ using EtCoreApi.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace EtCoreApi.Controllers
 {
@@ -20,35 +21,35 @@ namespace EtCoreApi.Controllers
         }
 
         [HttpPost]
-        public ActionResult<CreateExpenseDto> CreateExpense(CreateExpenseDto createExpenseDto)
+        public async Task<ActionResult<CreateExpenseDto>> CreateExpenseAsync(CreateExpenseDto createExpenseDto)
         {
-            Expense expense = createExpenseDto.AsExpense();
+            Expense expense =  createExpenseDto.AsExpense();
 
-            iExpensesRepository.CreateExpense(expense);
+            await iExpensesRepository.CreateExpenseAsync(expense);
 
-            return Ok(CreatedAtAction(nameof(GetExpense), new { id = expense.Id }, expense.AsDto()));
+            return Ok(CreatedAtAction(nameof(GetExpenseAsync), new { id = expense.Id }, expense.AsDto()));
         }
 
         // DELETE /expense/{Id}
         [HttpDelete("Id")]
-        public ActionResult DeleteExpense(Guid Id)
+        public async Task<ActionResult> DeleteExpenseAsync(Guid Id)
         {
-            var existingExpense = iExpensesRepository.GetExpense(Id);
+            var taskOfExistingExpense = iExpensesRepository.GetExpenseAsync(Id);
 
-            if (existingExpense is null)
+            if (taskOfExistingExpense is null)
             {
                 return NotFound();
             }
 
-            iExpensesRepository.DeleteExpense(existingExpense.Id);
+            await iExpensesRepository.DeleteExpenseAsync(taskOfExistingExpense.Result.Id);
 
             return NoContent();
         }
 
         [HttpGet("{Id}")]
-        public ActionResult<ExpenseDto> GetExpense(Guid Id)
+        public async Task<ActionResult<ExpenseDto>> GetExpenseAsync(Guid Id)
         {
-            var expense = iExpensesRepository.GetExpense(Id);
+            var expense = await iExpensesRepository.GetExpenseAsync(Id);
 
             if (expense == null)
             {
@@ -59,20 +60,22 @@ namespace EtCoreApi.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<ExpenseDto> GetExpenses()
+        public async Task<IEnumerable<ExpenseDto>> GetExpensesAsync()
         {
-            var expenses = iExpensesRepository.GetExpenses().Select(p => p.AsDto());
+            var expenses = (await iExpensesRepository.GetExpensesAsync()).Select(p => p.AsDto());
 
             return expenses;
         }
 
         // PUT /expense/{id}
         [HttpPut("{Id}")]
-        public ActionResult UpdateExpense(Guid Id, UpdateExpenseDto updateExpenseDto)
+        public async Task<ActionResult> UpdateExpenseAsync(Guid Id, UpdateExpenseDto updateExpenseDto)
         {
-            var existingExpense = iExpensesRepository.GetExpense(Id);
+            var taskOfExistingExpense = iExpensesRepository.GetExpenseAsync(Id);
 
-            if (existingExpense is null)
+            var existingExpense = taskOfExistingExpense.Result;
+
+            if (taskOfExistingExpense is null)
             {
                 return NotFound();
             }
@@ -84,7 +87,7 @@ namespace EtCoreApi.Controllers
                 ExpenseDate = updateExpenseDto.ExpenseDate
             };
 
-            iExpensesRepository.UpdateExpense(updatedExpense);
+            await iExpensesRepository.UpdateExpenseAsync(updatedExpense);
 
             return NoContent();
         }

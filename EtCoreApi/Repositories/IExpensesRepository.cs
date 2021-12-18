@@ -1,19 +1,20 @@
 ﻿using System;
 using EtCoreApi.Entities;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace EtCoreApi.Repositories
 {
     public interface IExpensesRepository
     {
-        void CreateExpense(Expense expense);
+        Task CreateExpenseAsync(Expense expense);
 
-        void DeleteExpense(Guid id);
+        Task DeleteExpenseAsync(Guid id);
 
-        Expense GetExpense(Guid id);
+        Task<Expense> GetExpenseAsync(Guid  id);
 
-        IEnumerable<Expense> GetExpenses();
+        Task<IEnumerable<Expense>> GetExpensesAsync();
 
-        void UpdateExpense(Expense expense);
+        Task UpdateExpenseAsync(Expense expense);
     }
 }

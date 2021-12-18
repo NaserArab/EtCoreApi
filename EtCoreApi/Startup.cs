@@ -43,7 +43,7 @@ namespace EtCoreApi
             
             services.AddSingleton<IExpensesRepository, MongoDbExpensesRepository>(); 
 
-            services.AddControllers();
+            services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false);
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "EtCoreApi", Version = "v1" });
