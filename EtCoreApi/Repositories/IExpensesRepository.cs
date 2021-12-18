@@ -1,4 +1,5 @@
-﻿using EtCoreApi.Entities;
+﻿using System;
+using EtCoreApi.Entities;
 using System.Collections.Generic;
 
 namespace EtCoreApi.Repositories
@@ -7,9 +8,9 @@ namespace EtCoreApi.Repositories
     {
         void CreateExpense(Expense expense);
 
-        void DeleteExpense(int expenseId);
+        void DeleteExpense(Guid id);
 
-        Expense GetExpense(int id);
+        Expense GetExpense(Guid id);
 
         IEnumerable<Expense> GetExpenses();
 

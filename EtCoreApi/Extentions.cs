@@ -9,7 +9,7 @@ namespace EtCoreApi
         {
             return new ExpenseDto
             {
-                ExpenseId = expense.ExpenseId,
+                Id = expense.Id,
                 ExpenseDetails = expense.ExpenseDetails,
                 ExpenseAmount = expense.ExpenseAmount,
                 ExpenseDate = expense.ExpenseDate
@@ -20,7 +20,7 @@ namespace EtCoreApi
         {
             return new Expense
             {
-                ExpenseId = expenseDto.ExpenseId,
+                Id = expenseDto.Id,
                 ExpenseDetails = expenseDto.ExpenseDetails,
                 ExpenseAmount = expenseDto.ExpenseAmount,
                 ExpenseDate = expenseDto.ExpenseDate

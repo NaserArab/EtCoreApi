@@ -9,9 +9,9 @@ namespace EtCoreApi.Repositories
     {
         private readonly List<Expense> expenses = new()
         {
-            new Expense { ExpenseId = 1, ExpenseDetails = "First expense", ExpenseDate = DateTimeOffset.UtcNow, ExpenseAmount = 700 },
-            new Expense { ExpenseId = 2, ExpenseDetails = "Second expense", ExpenseDate = DateTimeOffset.UtcNow, ExpenseAmount = 800 },
-            new Expense { ExpenseId = 3, ExpenseDetails = "Third expense", ExpenseDate = DateTimeOffset.UtcNow, ExpenseAmount = 900 },
+            new Expense { Id = Guid.NewGuid(), ExpenseDetails = "First expense", ExpenseDate = DateTimeOffset.UtcNow, ExpenseAmount = 700 },
+            new Expense { Id = Guid.NewGuid(), ExpenseDetails = "Second expense", ExpenseDate = DateTimeOffset.UtcNow, ExpenseAmount = 800 },
+            new Expense { Id = Guid.NewGuid(), ExpenseDetails = "Third expense", ExpenseDate = DateTimeOffset.UtcNow, ExpenseAmount = 900 },
         };
 
         public void CreateExpense(Expense expense)
@@ -19,15 +19,15 @@ namespace EtCoreApi.Repositories
             expenses.Add(expense);
         }
 
-        public void DeleteExpense(int expenseId)
+        public void DeleteExpense(Guid Id)
         {
-            var index = expenses.FindIndex(p => p.ExpenseId == expenseId);
+            var index = expenses.FindIndex(p => p.Id == Id);
             expenses.RemoveAt(index);
         }
 
-        public Expense GetExpense(int expenseId)
+        public Expense GetExpense(Guid Id)
         {
-            return expenses.FirstOrDefault(p => p.ExpenseId == expenseId);
+            return expenses.FirstOrDefault(p => p.Id == Id);
         }
 
         public IEnumerable<Expense> GetExpenses()
@@ -37,7 +37,7 @@ namespace EtCoreApi.Repositories
 
         public void UpdateExpense(Expense expense)
         {
-            var index = expenses.FindIndex(p => p.ExpenseId == expense.ExpenseId);
+            var index = expenses.FindIndex(p => p.Id == expense.Id);
             expenses[index] = expense;
         }
     }

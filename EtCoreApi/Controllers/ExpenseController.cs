@@ -1,4 +1,5 @@
-﻿using EtCoreApi.Dtos;
+﻿using System;
+using EtCoreApi.Dtos;
 using EtCoreApi.Entities;
 using EtCoreApi.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -25,29 +26,29 @@ namespace EtCoreApi.Controllers
 
             iExpensesRepository.CreateExpense(expense);
 
-            return Ok(CreatedAtAction(nameof(GetExpense), new { id = expense.ExpenseDetails }, expense.AsDto()));
+            return Ok(CreatedAtAction(nameof(GetExpense), new { id = expense.Id }, expense.AsDto()));
         }
 
-        // DELETE /expense/{expenseId}
-        [HttpDelete("expenseId")]
-        public ActionResult DeleteExpense(int expenseId)
+        // DELETE /expense/{Id}
+        [HttpDelete("Id")]
+        public ActionResult DeleteExpense(Guid Id)
         {
-            var existingExpense = iExpensesRepository.GetExpense(expenseId);
+            var existingExpense = iExpensesRepository.GetExpense(Id);
 
             if (existingExpense is null)
             {
                 return NotFound();
             }
 
-            iExpensesRepository.DeleteExpense(existingExpense.ExpenseId);
+            iExpensesRepository.DeleteExpense(existingExpense.Id);
 
             return NoContent();
         }
 
-        [HttpGet("{expenseId}")]
-        public ActionResult<ExpenseDto> GetExpense(int expenseId)
+        [HttpGet("{Id}")]
+        public ActionResult<ExpenseDto> GetExpense(Guid Id)
         {
-            var expense = iExpensesRepository.GetExpense(expenseId);
+            var expense = iExpensesRepository.GetExpense(Id);
 
             if (expense == null)
             {
@@ -64,11 +65,12 @@ namespace EtCoreApi.Controllers
 
             return expenses;
         }
+
         // PUT /expense/{id}
-        [HttpPut("{expenseId}")]
-        public ActionResult UpdateExpense(int expenseId, UpdateExpenseDto updateExpenseDto)
+        [HttpPut("{Id}")]
+        public ActionResult UpdateExpense(Guid Id, UpdateExpenseDto updateExpenseDto)
         {
-            var existingExpense = iExpensesRepository.GetExpense(expenseId);
+            var existingExpense = iExpensesRepository.GetExpense(Id);
 
             if (existingExpense is null)
             {

@@ -5,9 +5,9 @@ namespace EtCoreApi.Dtos
 {
     public record ExpenseDto
     {
-        public int ExpenseId { get; init; }
+        public Guid Id { get; set; }
         public DateTimeOffset ExpenseDate { get; set; }
-        public decimal ExpenseAmount { get; init; }
-        public string ExpenseDetails { get; init; }
+        public decimal ExpenseAmount { get; set; }
+        public string ExpenseDetails { get; set; }
     }
 }
