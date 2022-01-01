@@ -69,10 +69,10 @@ namespace EtCoreApi
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "EtCoreApi v1"));
             }
 
-            if (env.IsDevelopment())
-            {
+            //if (env.IsDevelopment())
+            //{
                 app.UseHttpsRedirection();
-            }
+            //}
             
             app.UseRouting();
 

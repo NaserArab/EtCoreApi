@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace EtCoreApi.Controllers
 {
@@ -14,10 +15,12 @@ namespace EtCoreApi.Controllers
     public class ExpenseController : ControllerBase
     {
         private readonly IExpensesRepository iExpensesRepository;
+        private readonly ILogger<ExpenseController> logger;
 
-        public ExpenseController(IExpensesRepository _iExpensesRepository)
+        public ExpenseController(IExpensesRepository _iExpensesRepository, ILogger<ExpenseController> logger)
         {
             this.iExpensesRepository = _iExpensesRepository;
+            this.logger = logger;
         }
 
         [HttpPost]
@@ -44,6 +47,22 @@ namespace EtCoreApi.Controllers
             await iExpensesRepository.DeleteExpenseAsync(taskOfExistingExpense.Result.Id);
 
             return NoContent();
+        }
+
+        // GET /items
+        [HttpGet]
+        public async Task<IEnumerable<ExpenseDto>> GetExpenseAsync(string details = null)
+        {
+            var expenses = (await iExpensesRepository.GetExpensesAsync()).Select(expense => expense.AsDto());
+
+            if (string.IsNullOrWhiteSpace(details) == false)
+            {
+                expenses = expenses.Where(item => item.ExpenseDetails.Contains(details, StringComparison.OrdinalIgnoreCase));
+            }
+
+            logger.LogInformation($"{DateTime.UtcNow.ToString("hh:mm:ss")}: Retrieved {expenses.Count()} items");
+
+            return expenses;
         }
 
         [HttpGet("{Id}")]
