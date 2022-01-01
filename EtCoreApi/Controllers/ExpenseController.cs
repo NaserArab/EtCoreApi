@@ -51,7 +51,7 @@ namespace EtCoreApi.Controllers
 
         // GET /items
         [HttpGet]
-        public async Task<IEnumerable<ExpenseDto>> GetExpenseAsync(string details = null)
+        public async Task<IEnumerable<ExpenseDto>> GetExpensesAsync(string details = null)
         {
             var expenses = (await iExpensesRepository.GetExpensesAsync()).Select(expense => expense.AsDto());
 
