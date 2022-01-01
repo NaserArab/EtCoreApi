@@ -50,20 +50,20 @@ namespace EtCoreApi.Controllers
         }
 
         // GET /items
-        [HttpGet]
-        public async Task<IEnumerable<ExpenseDto>> GetExpensesAsync(string details = null)
-        {
-            var expenses = (await iExpensesRepository.GetExpensesAsync()).Select(expense => expense.AsDto());
+        //[HttpPost]
+        //public async Task<IEnumerable<ExpenseDto>> GetExpensesAsync(string details = null)
+        //{
+        //    var expenses = (await iExpensesRepository.GetExpensesAsync()).Select(expense => expense.AsDto());
 
-            if (string.IsNullOrWhiteSpace(details) == false)
-            {
-                expenses = expenses.Where(item => item.ExpenseDetails.Contains(details, StringComparison.OrdinalIgnoreCase));
-            }
+        //    if (string.IsNullOrWhiteSpace(details) == false)
+        //    {
+        //        expenses = expenses.Where(item => item.ExpenseDetails.Contains(details, StringComparison.OrdinalIgnoreCase));
+        //    }
 
-            logger.LogInformation($"{DateTime.UtcNow.ToString("hh:mm:ss")}: Retrieved {expenses.Count()} items");
+        //    logger.LogInformation($"{DateTime.UtcNow.ToString("hh:mm:ss")}: Retrieved {expenses.Count()} items");
 
-            return expenses;
-        }
+        //    return expenses;
+        //}
 
         [HttpGet("{Id}")]
         public async Task<ActionResult<ExpenseDto>> GetExpenseAsync(Guid Id)

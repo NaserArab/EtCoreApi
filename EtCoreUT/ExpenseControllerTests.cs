@@ -52,24 +52,24 @@ namespace EtCoreUT
             ((Microsoft.AspNetCore.Mvc.ObjectResult)expense.Result).Value.Should().BeEquivalentTo(expectedExpense, options => options.ComparingByMembers<Expense>());
         }
 
-        [Fact]
-        public async Task GetExpensesAsync_WithMatchingExpenses_ReturnsMatchingExpenses()
-        {
-            //Arrange
-            var allExpenses = new[] { CreateRandomExpense(), CreateRandomExpense(), CreateRandomExpense() };
+        //[Fact]
+        //public async Task GetExpensesAsync_WithMatchingExpenses_ReturnsMatchingExpenses()
+        //{
+        //    //Arrange
+        //    var allExpenses = new[] { CreateRandomExpense(), CreateRandomExpense(), CreateRandomExpense() };
 
-            var nameToMatch = "random";
+        //    var nameToMatch = "random";
 
-            repositoryStub.Setup(repo => repo.GetExpensesAsync()).ReturnsAsync(allExpenses);
+        //    repositoryStub.Setup(repo => repo.GetExpensesAsync()).ReturnsAsync(allExpenses);
 
-            var controller = new ExpenseController(repositoryStub.Object, loggerStub.Object);
+        //    var controller = new ExpenseController(repositoryStub.Object, loggerStub.Object);
 
-            //Act
-            IEnumerable<ExpenseDto> foundExpenses = await controller.GetExpensesAsync(nameToMatch);
+        //    //Act
+        //    IEnumerable<ExpenseDto> foundExpenses = await controller.GetExpensesAsync(nameToMatch);
 
-            //Assert
-            foundExpenses.Should().OnlyContain(expense => expense.ExpenseDetails == allExpenses[0].ExpenseDetails);
-        }
+        //    //Assert
+        //    foundExpenses.Should().OnlyContain(expense => expense.ExpenseDetails == allExpenses[0].ExpenseDetails);
+        //}
 
         [Fact]
         public async Task GetExpensesAsync_WithExistingExpenses_ReturnsAllExpenses()
