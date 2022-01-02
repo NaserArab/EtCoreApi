@@ -26,11 +26,11 @@ namespace EtCoreApi.Controllers
         [HttpPost]
         public async Task<ActionResult<CreateExpenseDto>> CreateExpenseAsync(CreateExpenseDto createExpenseDto)
         {
-            Expense expense =  createExpenseDto.AsExpense();
+            Expense expense = createExpenseDto.AsExpense();
 
             await iExpensesRepository.CreateExpenseAsync(expense);
 
-            return Ok(CreatedAtAction(nameof(GetExpenseAsync), new { id = expense.Id }, expense.AsDto()));
+            return Ok(CreatedAtAction(nameof(GetExpenseByIdAsync), new { id = expense.Id }, expense.AsDto()));
         }
 
         // DELETE /expense/{Id}
@@ -50,23 +50,23 @@ namespace EtCoreApi.Controllers
         }
 
         // GET /items
-        //[HttpPost]
-        //public async Task<IEnumerable<ExpenseDto>> GetExpensesAsync(string details = null)
-        //{
-        //    var expenses = (await iExpensesRepository.GetExpensesAsync()).Select(expense => expense.AsDto());
+        [HttpGet("{details}")]
+        public async Task<IEnumerable<ExpenseDto>> GetExpensesByDetailsAsync(string details = null)
+        {
+            var expenses = (await iExpensesRepository.GetExpensesAsync()).Select(expense => expense.AsDto());
 
-        //    if (string.IsNullOrWhiteSpace(details) == false)
-        //    {
-        //        expenses = expenses.Where(item => item.ExpenseDetails.Contains(details, StringComparison.OrdinalIgnoreCase));
-        //    }
+            if (string.IsNullOrWhiteSpace(details) == false)
+            {
+                expenses = expenses.Where(item => item.ExpenseDetails.Contains(details, StringComparison.OrdinalIgnoreCase));
+            }
 
-        //    logger.LogInformation($"{DateTime.UtcNow.ToString("hh:mm:ss")}: Retrieved {expenses.Count()} items");
+            logger.LogInformation($"{DateTime.UtcNow:hh:mm:ss}: Retrieved {expenses.Count()} items");
 
-        //    return expenses;
-        //}
+            return expenses;
+        }
 
         [HttpGet("{Id}")]
-        public async Task<ActionResult<ExpenseDto>> GetExpenseAsync(Guid Id)
+        public async Task<ActionResult<ExpenseDto>> GetExpenseByIdAsync(Guid Id)
         {
             var expense = await iExpensesRepository.GetExpenseAsync(Id);
 
