@@ -6,16 +6,16 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
-COPY ["EtCoreApi/EtCoreApi.csproj", "EtCoreApi/"]
-RUN dotnet restore "EtCoreApi/EtCoreApi.csproj"
+COPY ["EtCoreApi/EtCore.Api.csproj", "EtCoreApi/"]
+RUN dotnet restore "EtCoreApi/EtCore.Api.csproj"
 COPY . .
 WORKDIR "/src/EtCoreApi"
-RUN dotnet build "EtCoreApi.csproj" -c Release -o /app/build
+RUN dotnet build "EtCore.Api.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "EtCoreApi.csproj" -c Release -o /app/publish
+RUN dotnet publish "EtCore.Api.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "EtCoreApi.dll"]
+ENTRYPOINT ["dotnet", "EtCore.Api.dll"]
