@@ -47,5 +47,10 @@ namespace EtCoreApi.Repositories
             var filter = filterBuilder.Eq(existingExpense => existingExpense.Id, expense.Id);
             await expensesCollection.ReplaceOneAsync(filter, expense);
         }
+
+        public bool SaveChanges()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

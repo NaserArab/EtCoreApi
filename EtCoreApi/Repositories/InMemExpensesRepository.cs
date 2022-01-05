@@ -47,5 +47,10 @@ namespace EtCoreApi.Repositories
 
             await Task.CompletedTask;
         }
+
+        public bool SaveChanges()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

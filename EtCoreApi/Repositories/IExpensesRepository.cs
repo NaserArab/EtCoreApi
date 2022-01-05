@@ -16,5 +16,11 @@ namespace EtCoreApi.Repositories
         Task<IEnumerable<Expense>> GetExpensesAsync();
 
         Task UpdateExpenseAsync(Expense expense);
+
+        #region EntityFramework
+
+        bool SaveChanges();
+
+        #endregion
     }
 }
