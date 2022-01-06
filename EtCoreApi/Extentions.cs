@@ -5,9 +5,9 @@ namespace EtCoreApi
 {
     public static class Extentions
     {
-        public static ExpenseDto AsDto(this Expense expense)
+        public static ExpenseReadDto AsDto(this Expense expense)
         {
-            return new ExpenseDto
+            return new ExpenseReadDto
             {
                 Id = expense.Id,
                 ExpenseDetails = expense.ExpenseDetails,
@@ -16,7 +16,7 @@ namespace EtCoreApi
             };
         }
 
-        public static Expense AsExpense(this ExpenseDto expenseDto)
+        public static Expense AsExpense(this ExpenseReadDto expenseDto)
         {
             return new Expense
             {
@@ -27,7 +27,7 @@ namespace EtCoreApi
             };
         }
 
-        public static Expense AsExpense(this CreateExpenseDto createExpenseDto)
+        public static Expense AsExpense(this ExpenseCreateDto createExpenseDto)
         {
             return new Expense
             {

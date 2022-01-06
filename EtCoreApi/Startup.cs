@@ -57,6 +57,7 @@ namespace EtCoreApi
             {
                 if (_dataBaseSystemUsed.Equals("sql"))
                 {
+                    PrepSqlDb.PrepPopulation(app);
                 }
                 else if (_dataBaseSystemUsed.Equals("mongo"))
                 {
@@ -134,6 +135,7 @@ namespace EtCoreApi
             }
 
             services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false);
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "EtCoreApi", Version = "v1" });

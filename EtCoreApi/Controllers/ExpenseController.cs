@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using EtCoreApi.Dtos;
 using EtCoreApi.Entities;
 using EtCoreApi.Repositories;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.Extensions.Logging;
 
 namespace EtCoreApi.Controllers
@@ -16,15 +18,17 @@ namespace EtCoreApi.Controllers
     {
         private readonly IExpensesRepository iExpensesRepository;
         private readonly ILogger<ExpenseController> logger;
+        private readonly IMapper mapper;
 
-        public ExpenseController(IExpensesRepository _iExpensesRepository, ILogger<ExpenseController> logger)
+        public ExpenseController(IExpensesRepository _iExpensesRepository, ILogger<ExpenseController> logger,IMapper mapper)
         {
             this.iExpensesRepository = _iExpensesRepository;
             this.logger = logger;
+            this.mapper = mapper;
         }
 
         [HttpPost]
-        public async Task<ActionResult<CreateExpenseDto>> CreateExpenseAsync(CreateExpenseDto createExpenseDto)
+        public async Task<ActionResult<ExpenseCreateDto>> CreateExpenseAsync(ExpenseCreateDto createExpenseDto)
         {
             Expense expense = createExpenseDto.AsExpense();
 
@@ -50,23 +54,23 @@ namespace EtCoreApi.Controllers
         }
 
         // GET /items
-        [HttpGet("{details}")]
-        public async Task<IEnumerable<ExpenseDto>> GetExpensesByDetailsAsync(string details = null)
-        {
-            var expenses = (await iExpensesRepository.GetExpensesAsync()).Select(expense => expense.AsDto());
+        //[HttpGet("{details}")]
+        //public async Task<IEnumerable<ExpenseReadDto>> GetExpensesByDetailsAsync(string details = null)
+        //{
+        //    var expenses = (await iExpensesRepository.GetExpensesAsync()).Select(expense => expense.AsDto());
 
-            if (string.IsNullOrWhiteSpace(details) == false)
-            {
-                expenses = expenses.Where(item => item.ExpenseDetails.Contains(details, StringComparison.OrdinalIgnoreCase));
-            }
+        //    if (string.IsNullOrWhiteSpace(details) == false)
+        //    {
+        //        expenses = expenses.Where(item => item.ExpenseDetails.Contains(details, StringComparison.OrdinalIgnoreCase));
+        //    }
 
-            logger.LogInformation($"{DateTime.UtcNow:hh:mm:ss}: Retrieved {expenses.Count()} items");
+        //    logger.LogInformation($"{DateTime.UtcNow:hh:mm:ss}: Retrieved {expenses.Count()} items");
 
-            return expenses;
-        }
+        //    return expenses;
+        //}
 
         [HttpGet("{Id}")]
-        public async Task<ActionResult<ExpenseDto>> GetExpenseByIdAsync(Guid Id)
+        public async Task<ActionResult<ExpenseReadDto>> GetExpenseByIdAsync(Guid Id)
         {
             var expense = await iExpensesRepository.GetExpenseAsync(Id);
 
@@ -79,16 +83,18 @@ namespace EtCoreApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<ExpenseDto>> GetExpensesAsync()
+        public async Task<ActionResult<IEnumerable<ExpenseReadDto>>> GetExpensesAsync()
         {
-            var expenses = (await iExpensesRepository.GetExpensesAsync()).Select(p => p.AsDto());
+            var expenses = await iExpensesRepository.GetExpensesAsync();
 
-            return expenses;
+            var expensesReadDtos = mapper.Map<IEnumerable<ExpenseReadDto>>(expenses);
+
+            return Ok(expensesReadDtos);
         }
 
         // PUT /expense/{id}
         [HttpPut("{Id}")]
-        public async Task<ActionResult> UpdateExpenseAsync(Guid Id, UpdateExpenseDto updateExpenseDto)
+        public async Task<ActionResult> UpdateExpenseAsync(Guid Id, ExpenseUpdateDto updateExpenseDto)
         {
             var taskOfExistingExpense = iExpensesRepository.GetExpenseAsync(Id);
 
