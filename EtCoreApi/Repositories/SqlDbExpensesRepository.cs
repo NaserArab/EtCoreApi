@@ -42,9 +42,9 @@ namespace EtCore.Api.Repositories
             throw new NotImplementedException();
         }
 
-        public bool SaveChanges()
-        {
-            return (_appSqlDbContext.SaveChanges() >= 0);
+        public async Task SaveChanges()
+        { 
+            await _appSqlDbContext.SaveChangesAsync();
         }
     }
 }

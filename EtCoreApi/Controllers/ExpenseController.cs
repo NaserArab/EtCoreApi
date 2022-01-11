@@ -13,7 +13,6 @@ using Microsoft.Extensions.Logging;
 namespace EtCoreApi.Controllers
 {
     [ApiController]
-    [Route("Expense")]
     public class ExpenseController : ControllerBase
     {
         private readonly IExpensesRepository iExpensesRepository;
@@ -28,17 +27,22 @@ namespace EtCoreApi.Controllers
         }
 
         [HttpPost]
+        [Route("Expense/CreateExpenseAsync")]
         public async Task<ActionResult<ExpenseCreateDto>> CreateExpenseAsync(ExpenseCreateDto createExpenseDto)
         {
-            Expense expense = createExpenseDto.AsExpense();
+            var expense = mapper.Map<Expense>(createExpenseDto);
 
             await iExpensesRepository.CreateExpenseAsync(expense);
+            await iExpensesRepository.SaveChanges();
 
-            return Ok(CreatedAtAction(nameof(GetExpenseByIdAsync), new { id = expense.Id }, expense.AsDto()));
+            var expenseReadDto = mapper.Map<ExpenseReadDto>(expense);
+
+            return Ok(CreatedAtRoute(nameof(GetExpenseByIdAsync), new { id = expenseReadDto.Id }, expenseReadDto));
         }
 
         // DELETE /expense/{Id}
-        [HttpDelete("Id")]
+        [HttpDelete]
+        [Route("Expense/DeleteExpenseAsync/{Id:Guid}")]
         public async Task<ActionResult> DeleteExpenseAsync(Guid Id)
         {
             var taskOfExistingExpense = iExpensesRepository.GetExpenseAsync(Id);
@@ -69,7 +73,8 @@ namespace EtCoreApi.Controllers
         //    return expenses;
         //}
 
-        [HttpGet("{Id}")]
+        [HttpGet]
+        [Route("Expense/GetExpenseByIdAsync/{Id:Guid}")]
         public async Task<ActionResult<ExpenseReadDto>> GetExpenseByIdAsync(Guid Id)
         {
             var expense = await iExpensesRepository.GetExpenseAsync(Id);
@@ -79,10 +84,11 @@ namespace EtCoreApi.Controllers
                 return NotFound();
             }
 
-            return Ok(expense.AsDto());
+            return Ok(mapper.Map<ExpenseReadDto>(expense));
         }
 
         [HttpGet]
+        [Route("Expense/GetExpensesAsync")]
         public async Task<ActionResult<IEnumerable<ExpenseReadDto>>> GetExpensesAsync()
         {
             var expenses = await iExpensesRepository.GetExpensesAsync();
@@ -93,7 +99,8 @@ namespace EtCoreApi.Controllers
         }
 
         // PUT /expense/{id}
-        [HttpPut("{Id}")]
+        [HttpPut]
+        [Route("Expense/UpdateExpenseAsync/{Id:Guid}")]
         public async Task<ActionResult> UpdateExpenseAsync(Guid Id, ExpenseUpdateDto updateExpenseDto)
         {
             var taskOfExistingExpense = iExpensesRepository.GetExpenseAsync(Id);

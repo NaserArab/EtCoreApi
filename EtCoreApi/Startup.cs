@@ -53,6 +53,19 @@ namespace EtCoreApi
 
             app.UseAuthorization();
 
+            //app.UseEndpoints(endpoints =>
+            //{
+            //    endpoints.MapControllers();
+            //});
+
+            app.UseEndpoints(endpoints =>
+                {
+                    endpoints.MapControllerRoute(
+                        name: "default",
+                        pattern: "{controller}/{action}/{id?}");
+                }
+            );
+
             if (string.IsNullOrEmpty(_dataBaseSystemUsed) == false)
             {
                 if (_dataBaseSystemUsed.Equals("sql"))
@@ -63,7 +76,7 @@ namespace EtCoreApi
                 {
                     app.UseEndpoints(endpoints =>
                     {
-                        endpoints.MapControllers();
+                        //endpoints.MapControllers();
 
                         endpoints.MapHealthChecks("/health/ready", new HealthCheckOptions
                         {

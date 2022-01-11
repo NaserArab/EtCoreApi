@@ -19,7 +19,7 @@ namespace EtCoreApi.Repositories
 
         #region EntityFramework
 
-        bool SaveChanges();
+        Task SaveChanges();
 
         #endregion
     }
